@@ -20,7 +20,7 @@ function Brain(size) {
   }
 
   this.mutate = function() {
-    var mutationRate = 0.01;
+    var mutationRate = mutation_rate;
     for(var i = 0; i < this.size; i++) {
       var rand = random();
       if(rand < mutationRate) {

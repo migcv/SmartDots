@@ -4,6 +4,8 @@ function Population() {
   this.fitnessSum;
   this.generation = 1;
 
+  this.consecutiveFailures = 0;
+
   this.init = function(size) {
     this.size = size;
     for(var i = 0; i < size; i++) {
@@ -13,8 +15,13 @@ function Population() {
   }
 
   this.show = function () {
-    for(var i = 0; i < this.size; i++) {
+    for(var i = 1; i < this.size; i++) {
+      fill(0);
       this.dots[i].show();
+    }
+    if(best_dot != null) {
+      fill('yellow');
+      this.dots[0].show();
     }
   }
 
@@ -33,8 +40,17 @@ function Population() {
   }
 
   this.calcFitness = function() {
+    var sucess = false;
     for(var i = 0; i < this.size; i++) {
       this.dots[i].calcFitness();
+      if(this.dots[i].success)
+        sucess = true;
+    }
+    if(sucess)
+      mutation_rate = DEFAULT_MUTATION;
+    else {
+      this.consecutiveFailures++;
+      mutation_rate += this.consecutiveFailures * 0.0001;
     }
   }
 
@@ -74,7 +90,9 @@ function Population() {
   }
 
   this.mutateBabies = function() {
-    for(var i = 0; i < this.size; i++) {
+    this.dots[0] = best_dot;
+    this.dots[0].restPosition();
+    for(var i = 1; i < this.size; i++) {
       this.dots[i].brain.mutate();
     }
   }
